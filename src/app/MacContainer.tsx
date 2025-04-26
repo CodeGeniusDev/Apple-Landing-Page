@@ -1,15 +1,15 @@
 import React from "react";
-import { ScrollControls, useGLTF, useScroll, useTexture } from "@react-three/drei";
+import { useGLTF, useScroll, useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
 const MacContainer = () => {
-  const meshes = {};
+  const meshes: { [key: string]: THREE.Mesh } = {};
   const tex = useTexture("./red.jpg");
   const model = useGLTF("./mac.glb");
 
   model.scene.traverse((e) => {
-      meshes[e.name] = e;
+    meshes[e.name] = e;
   });
 
   meshes.screen.rotation.x = THREE.MathUtils.degToRad(180);
@@ -20,19 +20,14 @@ const MacContainer = () => {
 
   const data = useScroll();
 
-  useFrame((state, delta) => {
+  useFrame(() => {
     meshes.screen.rotation.x = THREE.MathUtils.degToRad(180 - data.offset * 90);
-  })
+  });
 
   return (
-    <>
-      <group position={[0, -10, 20]}>
-        <primitive object={model.scene} />
-        {/* <mesh>
-          <boxGeometry />
-        </mesh> */}
-      </group>
-    </>
+    <group position={[0, -10, 20]}>
+      <primitive object={model.scene} />
+    </group>
   );
 };
 
