@@ -9,19 +9,31 @@ const MacContainer = () => {
   const model = useGLTF("./mac.glb");
 
   model.scene.traverse((e) => {
-    meshes[e.name] = e;
+    if (e instanceof THREE.Mesh) {
+      meshes[e.name] = e;
+    }
   });
 
-  meshes.screen.rotation.x = THREE.MathUtils.degToRad(180);
-  meshes.matte.material.map = tex;
-  meshes.matte.material.emissiveIntensity = 0;
-  meshes.matte.material.metalness = 0;
-  meshes.matte.material.roughness = 1;
+  const screen = meshes["screen"];
+  const matte = meshes["matte"];
+
+  if (screen) {
+    screen.rotation.x = THREE.MathUtils.degToRad(180);
+  }
+
+  if (matte && matte.material instanceof THREE.MeshStandardMaterial) {
+    matte.material.map = tex;
+    matte.material.emissiveIntensity = 0;
+    matte.material.metalness = 0;
+    matte.material.roughness = 1;
+  }
 
   const data = useScroll();
 
   useFrame(() => {
-    meshes.screen.rotation.x = THREE.MathUtils.degToRad(180 - data.offset * 90);
+    if (screen) {
+      screen.rotation.x = THREE.MathUtils.degToRad(180 - data.offset * 90);
+    }
   });
 
   return (
